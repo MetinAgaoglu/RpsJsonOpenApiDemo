@@ -1,0 +1,289 @@
+{
+	"info": {
+		"_postman_id": "ebf39671-3481-4133-9e92-617c4fe63d2e",
+		"name": "YealinkRpsJsonApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Server List",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "9c67dc4b-8e30-42f7-9d3f-4467961bc7ae",
+						"type": "text/javascript",
+						"exec": [
+							"/**",
+							" * @Des: Example For Body Parameters API",
+							" * @Author：Seakeer",
+							" */",
+							" ",
+							"//service uri",
+							"var serviceUri = \"https://dm.yealink.com\";",
+							"pm.environment.set(\"serviceUri\", serviceUri);",
+							"",
+							"/**",
+							" * Params Needed For Creating Headers",
+							" */",
+							"var accesskeyId = \"431c7a63af6e410e9d1bcdeb678c16fc\"; ",
+							"var accesskeySecret = \"f523b9374eb149b68414f26d48f246d9\";",
+							"var api = \"api/open/v1/server/list\"; // first character is 'a', not '/'",
+							"var jsonBody = \"{\\\"key\\\":\\\"Server\\\"}\"; //same with Body you inputted",
+							"var httpMethod = \"POST\"; //http method: POST or GET。",
+							"",
+							"/**",
+							" * Headers Needed",
+							" */",
+							"var content_md5 = \"\";",
+							"var x_ca_key = \"\";",
+							"var x_ca_nonce = \"\";",
+							"var x_ca_timestamp = \"\";",
+							"var x_ca_signture = \"\";",
+							"",
+							"/**",
+							" * Create Headers",
+							" */",
+							"//Basic Headers",
+							"x_ca_key = accesskeyId;",
+							"x_ca_nonce = uuid(); //Random String.",
+							"//Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36); This is OK",
+							"x_ca_timestamp = new Date().getTime();",
+							"",
+							"//Header: Content-MD5； Body Params API Needed",
+							"content_md5 = CryptoJS.enc.Base64.stringify(CryptoJS.MD5(jsonBody,{asBytes:true}));",
+							"",
+							"//Create Header：X-Ca-Signature",
+							"//Attention:  natural order. 1 Content-MD5. 2 X-Ca-Key. 3 X-Ca-Nonce. 4 X-Ca-Timestamp.",
+							"var headers = \"Content-MD5:\" + content_md5 + \"\\n\" + ",
+							"              \"X-Ca-Key:\" + x_ca_key + \"\\n\" + ",
+							"              \"X-Ca-Nonce:\" + x_ca_nonce + \"\\n\" +",
+							"              \"X-Ca-Timestamp:\" + x_ca_timestamp;",
+							"var strToSign = httpMethod + \"\\n\" +",
+							"                headers + \"\\n\" + ",
+							"                api;",
+							"console.log(\"strToSign\", strToSign);",
+							"",
+							"//X-Ca-Signature     ",
+							"x_ca_signture = CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(strToSign, accesskeySecret));",
+							"",
+							"pm.environment.set(\"api\",api);",
+							"pm.environment.set(\"jsonBody\",jsonBody);",
+							"",
+							"pm.environment.set(\"x_ca_key\",x_ca_key);",
+							"pm.environment.set(\"x_ca_nonce\",x_ca_nonce);",
+							"pm.environment.set(\"x_ca_timestamp\",x_ca_timestamp);",
+							"pm.environment.set(\"x_ca_signture\",x_ca_signture);",
+							"pm.environment.set(\"content_md5\",content_md5);",
+							"",
+							"console.log(\"api\",api);",
+							"console.log(\"jsonBody\",jsonBody);",
+							"",
+							"console.log(\"x_ca_key\",x_ca_key);",
+							"console.log(\"x_ca_nonce\",x_ca_nonce);",
+							"console.log(\"x_ca_timestamp\",x_ca_timestamp);",
+							"console.log(\"x_ca_signture\",x_ca_signture);",
+							"console.log(\"content_md5\",content_md5);",
+							"",
+							"function uuid() {",
+							"  var s = [];",
+							"  var hexDigits = \"0123456789abcdef\";",
+							"  for (var i = 0; i < 32; i++) {",
+							"    s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);",
+							"  }",
+							"  s[14] = \"4\"; ",
+							"  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);",
+							"  ",
+							"  var uuid = s.join(\"\");",
+							"  return uuid;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Ca-Key",
+						"value": "{{x_ca_key}}"
+					},
+					{
+						"key": "X-Ca-Timestamp",
+						"value": "{{x_ca_timestamp}}"
+					},
+					{
+						"key": "X-Ca-Nonce",
+						"value": "{{x_ca_nonce}}"
+					},
+					{
+						"key": "X-Ca-Signature",
+						"value": "{{x_ca_signture}}"
+					},
+					{
+						"key": "Content-MD5",
+						"value": "{{content_md5}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{jsonBody}}"
+				},
+				"url": {
+					"raw": "{{serviceUri}}/{{api}}",
+					"host": [
+						"{{serviceUri}}"
+					],
+					"path": [
+						"{{api}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Device CheckMac",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "5cc713cf-5df2-44a3-b4c5-54e8ff00ac7e",
+						"type": "text/javascript",
+						"exec": [
+							"/**",
+							" * @Des: Example For Query Parameters API",
+							" * @Author：Seakeer",
+							" */",
+							" ",
+							"//service uri",
+							"var serviceUri = \"https://dm.yealink.com\";",
+							"pm.environment.set(\"serviceUri\", serviceUri);",
+							"",
+							"/**",
+							" * Params Needed For Creating Headers",
+							" */",
+							"var accesskeyId = \"431c7a63af6e410e9d1bcdeb678c16fc\";",
+							"var accesskeySecret = \"f523b9374eb149b68414f26d48f246d9\";",
+							"var api = \"api/open/v1/device/checkMac\"; // first character is 'a', not '/'",
+							"var params1Key = \"mac\"; //Query Param Name: /api/open/v1/device/checkMac?mac=123456789789    mac",
+							"var params1Value = \"123456789789\"; //Query Param Value: /api/open/v1/device/checkMac?mac=123456789789   123456789789",
+							"var httpMethod = \"GET\"; //http method: POST or GET。",
+							"",
+							"",
+							"/**",
+							" * Headers Needed. Query Param API Need Not Header Content-MD5",
+							" */",
+							"var x_ca_key = \"\";",
+							"var x_ca_nonce = \"\";",
+							"var x_ca_timestamp = \"\";",
+							"var x_ca_signture = \"\";",
+							"",
+							"/**",
+							" * Create Headers",
+							" */",
+							"//Basic Headers",
+							"x_ca_key = accesskeyId;",
+							"x_ca_nonce = uuid();  //Random String. ",
+							"//x_ca_nonce = Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36); This is OK.",
+							"x_ca_timestamp = new Date().getTime();",
+							"",
+							"//Create Header：X-Ca-Signature",
+							"//Attention:  natural order.  1 X-Ca-Key. 2 X-Ca-Nonce. 3 X-Ca-Timestamp.",
+							"var headers = \"X-Ca-Key:\" + x_ca_key + \"\\n\" + ",
+							"              \"X-Ca-Nonce:\" + x_ca_nonce + \"\\n\" +",
+							"              \"X-Ca-Timestamp:\" + x_ca_timestamp;",
+							"              ",
+							"var formattedQueryStr = params1Key + \"=\" + params1Value;",
+							"var strToSign = httpMethod + \"\\n\" +",
+							"                headers + \"\\n\" + ",
+							"                api + \"\\n\" +",
+							"                formattedQueryStr;",
+							"console.log(\"strToSign\", strToSign);",
+							"",
+							"//X-Ca-Signature     ",
+							"x_ca_signture = CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(strToSign, accesskeySecret));",
+							"",
+							"",
+							"pm.environment.set(\"api\",api);",
+							"pm.environment.set(\"params1Key\",params1Key);",
+							"pm.environment.set(\"params1Value\",params1Value);",
+							"",
+							"pm.environment.set(\"x_ca_key\",x_ca_key);",
+							"pm.environment.set(\"x_ca_nonce\",x_ca_nonce);",
+							"pm.environment.set(\"x_ca_timestamp\",x_ca_timestamp);",
+							"pm.environment.set(\"x_ca_signture\",x_ca_signture);",
+							"",
+							"",
+							"console.log(\"x_ca_key\",x_ca_key);",
+							"console.log(\"x_ca_nonce\",x_ca_nonce);",
+							"console.log(\"x_ca_timestamp\",x_ca_timestamp);",
+							"console.log(\"x_ca_signture\",x_ca_signture);",
+							"",
+							"function uuid() {",
+							"  var s = [];",
+							"  var hexDigits = \"0123456789abcdef\";",
+							"  for (var i = 0; i < 32; i++) {",
+							"    s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);",
+							"  }",
+							"  s[14] = \"4\"; ",
+							"  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);",
+							"  ",
+							"  var uuid = s.join(\"\");",
+							"  return uuid;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Ca-Key",
+						"value": "{{x_ca_key}}"
+					},
+					{
+						"key": "X-Ca-Timestamp",
+						"value": "{{x_ca_timestamp}}"
+					},
+					{
+						"key": "X-Ca-Nonce",
+						"value": "{{x_ca_nonce}}"
+					},
+					{
+						"key": "X-Ca-Signature",
+						"value": "{{x_ca_signture}}"
+					},
+					{
+						"key": "Content-Typ",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"key\":\"Server\"}"
+				},
+				"url": {
+					"raw": "{{serviceUri}}/{{api}}?{{params1Key}}={{params1Value}}",
+					"host": [
+						"{{serviceUri}}"
+					],
+					"path": [
+						"{{api}}"
+					],
+					"query": [
+						{
+							"key": "{{params1Key}}",
+							"value": "{{params1Value}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
